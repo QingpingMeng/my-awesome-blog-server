@@ -29,6 +29,7 @@
     "express-session": "^1.15.6",
     "graphql": "^0.13.2",
     "lusca": "^1.6.0",
+    "mongoose": "^5.2.6",
     "winston": "^3.0.0"
   },
   "devDependencies": {
@@ -41,6 +42,7 @@
     "@types/graphql": "^0.13.1",
     "@types/lodash": "^4.14.91",
     "@types/lusca": "^1.5.0",
+    "@types/mongoose": "^5.2.3",
     "@types/node": "^9.4.6",
     "@types/winston": "^2.3.9",
     "concurrently": "^3.6.0",
