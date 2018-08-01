@@ -6,12 +6,16 @@ import {
     GraphQLID
 } from 'graphql';
 import { Required } from '../definition';
+import { resolve } from 'path';
 
 const UserType = new GraphQLObjectType({
     name: 'User',
     fields: () => ({
         id: {
-            type: Required(GraphQLID)
+            type: Required(GraphQLID),
+            resolve: (article) => {
+                return article._id;
+            }
         },
         username: {
             type: Required(GraphQLString)
@@ -21,7 +25,7 @@ const UserType = new GraphQLObjectType({
         },
         avatar: {
             type: GraphQLString,
-            resolve(parent) {
+            resolve: (parent) => {
                 return (
                     parent.avatar ||
                     'https://thesocietypages.org/socimages/files/2009/05/nopic_192.gif'

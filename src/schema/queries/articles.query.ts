@@ -1,16 +1,8 @@
-import { GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLString } from 'graphql';
 import { List } from '../definition';
 import ArticleType from '../types/article.type';
-export const dummyPosts = [
-   {
-       id: 1,
-       title: 'hello world!',
-       author:  {
-        id: 1,
-        username: 'user01'
-    }
-   }
-];
+import { Article } from '../../models/articles.model';
+
 export const articles = {
     type: List(ArticleType),
     args: {
@@ -18,7 +10,7 @@ export const articles = {
             type: GraphQLString
         }
     },
-    resolve: (_: any, args: any) => {
-        return dummyPosts;
+    resolve: async (_: any, args: any) => {
+        return await Article.find().exec();
     }
 };

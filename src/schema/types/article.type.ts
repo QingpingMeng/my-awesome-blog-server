@@ -6,6 +6,9 @@ import CommentType, { CommentInputType } from './comment.type';
 const ArticleType = new GraphQLObjectType({
     name: 'Article',
     fields: () => ({
+        slug: {
+            type: Required(GraphQLString)
+        },
         id: {
             type: Required(GraphQLID)
         },
@@ -28,7 +31,7 @@ const ArticleType = new GraphQLObjectType({
 });
 
 export const ArticleInputType = new GraphQLInputObjectType({
-    name: 'Article',
+    name: 'ArticleInput',
     fields: () => ({
         id: {
             type: GraphQLID

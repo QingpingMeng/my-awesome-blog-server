@@ -1,20 +1,29 @@
-import { GraphQLInt, GraphQLString } from 'graphql';
+import { GraphQLString } from 'graphql';
 import { List } from '../definition';
 import userType from '../types/user.type';
-const dummyUsers = [
-   {
-       id: 1,
-       username: 'user01'
-   }
-];
-export const users = {
+import { RequestWithDb } from '../../utils/db';
+import { User } from '../../models/user.model';
+
+export const listUsers = {
     type: List(userType),
+    args: {
+        query: {
+            type: GraphQLString
+        }
+    },
+    resolve:  (_: any, args: any) => {
+       return User.find().exec();
+    }
+};
+
+export const userById = {
+    type: userType,
     args: {
         id: {
             type: GraphQLString
         }
     },
-    resolve: (_: any, args: any, context: any, info: any) => {
-        return dummyUsers;
+    resolve:  (_: any, {id}: {id: string}) => {
+        const user =  User.findOne(id).exec();
     }
 };

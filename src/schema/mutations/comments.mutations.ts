@@ -18,7 +18,7 @@ export const deleteComment = {
 };
 
 export const createComment = {
-    type: ArticleType,
+    type: CommentType,
     args: {
         comment: {
             type: CommentInputType
