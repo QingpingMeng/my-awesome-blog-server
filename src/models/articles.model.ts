@@ -4,12 +4,12 @@ import { Document, Schema, Model, model } from 'mongoose';
 import slug from 'slug';
 
 export interface IArticleAttribute {
-    slug: string;
+    slug?: string;
     title: string;
-    summary: string;
+    summary?: string;
     body: string;
-    comments: ICommentModel[] & { remove: (id: string) => void };
-    author: IUserModel;
+    comments?: ICommentModel[] & { remove: (id: string) => void };
+    author?: IUserModel;
 }
 
 export interface IArticleModel extends IArticleAttribute, Document {

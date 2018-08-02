@@ -3,9 +3,9 @@ import { Document, model, Schema, Model } from 'mongoose';
 import { IArticleModel } from './articles.model';
 
 export interface ICommentAttributes {
-    body: string;
-    author: IUserModel;
-    article: IArticleModel;
+    body?: string;
+    author?: IUserModel;
+    article?: IArticleModel;
 }
 
 export const CommentDBSchema = new Schema(

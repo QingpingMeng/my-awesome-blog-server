@@ -25,6 +25,6 @@ export const IUserDBSchema = new Schema({
         index: true
     },
     image: String,
-});
+}, {timestamps: true});
 
 export const User: Model<IUserModel> = model<IUserModel>('User', IUserDBSchema);

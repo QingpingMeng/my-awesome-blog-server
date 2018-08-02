@@ -1,16 +1,8 @@
 import { GraphQLString } from 'graphql';
 import CommentType from '../types/comment.type';
 import { List } from '../definition';
-export const dummyComments = [
-    {
-        id: '1',
-        content: 'comment 1'
-    },
-    {
-        id: '2',
-        content: 'comment 2'
-    }
-];
+import { Comment } from '../../models/comment.model';
+
 export const commentsQuery = {
     type: List(CommentType),
     args: {
@@ -19,6 +11,6 @@ export const commentsQuery = {
         }
     },
     resolve: (_: any, args: any) => {
-        return dummyComments.filter((comment) => comment.id === args.id);
+        return Comment.find().exec();
     }
 };

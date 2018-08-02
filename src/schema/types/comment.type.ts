@@ -13,7 +13,7 @@ const CommentType = new GraphQLObjectType({
         id: {
             type: Required(GraphQLID)
         },
-        content: {
+        body: {
             type: GraphQLString
         },
         author: {
@@ -28,7 +28,7 @@ export const CommentInputType = new GraphQLInputObjectType({
         id: {
             type: GraphQLID
         },
-        content: {
+        body: {
             type: GraphQLString
         },
         author: {

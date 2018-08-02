@@ -3,7 +3,7 @@ import { List } from '../definition';
 import ArticleType from '../types/article.type';
 import { Article } from '../../models/articles.model';
 
-export const articles = {
+export const listArticles = {
     type: List(ArticleType),
     args: {
         id: {

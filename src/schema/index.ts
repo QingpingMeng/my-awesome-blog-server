@@ -1,6 +1,6 @@
 import { GraphQLSchema, GraphQLObjectType } from 'graphql';
 import { commentsQuery as comments } from './queries/comments.query';
-import { articles } from './queries/articles.query';
+import { listArticles } from './queries/articles.query';
 import * as usersQueries from './queries/users.query';
 import * as commentMutations from './mutations/comments.mutations';
 import * as articlesMutations from './mutations/articles.mutations';
@@ -10,7 +10,7 @@ const query = new GraphQLObjectType({
     name: 'RootQuery',
     fields: {
         comments,
-        articles,
+        listArticles,
         ...usersQueries
     }
 });

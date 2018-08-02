@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import schema from './schema';
 import graphqlHTTP from 'express-graphql';
 import { connectToDb } from './utils/db';
+import { UserError } from './errors/userError';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: '.env.example' });
@@ -25,8 +26,18 @@ app.use(connectToDb);
 app.use(
     '/graphql',
     graphqlHTTP({
-        schema:  schema,
-        graphiql: true
+        schema: schema,
+        graphiql: true,
+        formatError(err) {
+            const userError = err.originalError as UserError;
+            return {
+                message: err.message,
+                code: err.originalError && userError && userError.code, // <--
+                locations: err.locations,
+                isUserError: err.originalError && userError && userError.isUserError,
+                path: err.path
+            };
+        }
     })
 );
 
