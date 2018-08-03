@@ -20,6 +20,7 @@
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\""
   },
   "dependencies": {
+    "@types/express-session": "^1.15.10",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
     "dotenv": "^6.0.0",
@@ -31,6 +32,8 @@
     "lodash": "^4.17.10",
     "lusca": "^1.6.0",
     "mongoose": "^5.2.6",
+    "passport": "^0.4.0",
+    "passport-github2": "^0.1.11",
     "slug": "^0.9.1",
     "winston": "^3.0.0"
   },
@@ -67,6 +70,8 @@
     "@types/mongodb-memory-server": "^1.8.0",
     "@types/mongoose": "^5.2.3",
     "@types/node": "^9.4.6",
+    "@types/passport": "^0.4.6",
+    "@types/passport-github2": "^1.2.0",
     "@types/slug": "^0.9.0",
     "@types/winston": "^2.3.9",
     "concurrently": "^3.6.0",
