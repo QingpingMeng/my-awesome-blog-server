@@ -9,3 +9,7 @@ export function List(type: GraphQLType) {
 export function Required(type: GraphQLType) {
     return new GraphQLNonNull(type);
 }
+
+export type IQueryConditionArg = {
+    condition?: string;
+};

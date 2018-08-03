@@ -1,7 +1,13 @@
-import { GraphQLObjectType, GraphQLString, GraphQLInputObjectType, GraphQLID } from 'graphql';
+import {
+    GraphQLObjectType,
+    GraphQLString,
+    GraphQLInputObjectType,
+    GraphQLID
+} from 'graphql';
 import { Required, List } from '../definition';
 import UserType, { UserInputType } from './user.type';
 import CommentType, { CommentInputType } from './comment.type';
+import { IArticleModel } from '../../models/articles.model';
 
 const ArticleType = new GraphQLObjectType({
     name: 'Article',
@@ -25,7 +31,23 @@ const ArticleType = new GraphQLObjectType({
             type: Required(UserType)
         },
         comments: {
-            type: List(CommentType)
+            type: List(CommentType),
+            resolve: async (article: IArticleModel) => {
+                const populatedArticle = await article
+                    .populate({
+                        path: 'comments',
+                        populate: {
+                            path: 'author'
+                        },
+                        options: {
+                            sort: {
+                                createdAt: 'desc'
+                            }
+                        }
+                    })
+                    .execPopulate();
+                return populatedArticle.comments;
+            }
         }
     })
 });

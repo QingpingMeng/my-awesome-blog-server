@@ -8,7 +8,7 @@ import {
 import { Article, IArticleAttribute } from '../../models/articles.model';
 import { connect, Mongoose } from 'mongoose';
 import MongodbMemoryServer from 'mongodb-memory-server';
-import { listArticles } from '../queries/articles.query';
+import { queryArticles } from '../queries/articles.query';
 import { UserError } from '../../errors/userError';
 import { createUser } from './users.mutations';
 
@@ -108,7 +108,7 @@ describe('Articles mutation test', () => {
         const result = await deleteArticle.resolve(undefined, { id: obj.id });
         expect(result.id).toEqual(obj.id);
 
-        const articles = await listArticles.resolve(undefined, undefined);
+        const articles = await queryArticles.resolve(undefined, undefined);
         expect(articles.length).toBe(0);
     });
 
