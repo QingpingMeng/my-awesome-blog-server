@@ -6,7 +6,6 @@ import {
     GraphQLID
 } from 'graphql';
 import { Required } from '../definition';
-import { resolve } from 'path';
 
 const UserType = new GraphQLObjectType({
     name: 'User',
@@ -17,6 +16,9 @@ const UserType = new GraphQLObjectType({
                 return article._id;
             }
         },
+        githubId: {
+            type: Required(GraphQLID),
+        },
         username: {
             type: Required(GraphQLString)
         },
@@ -24,13 +26,7 @@ const UserType = new GraphQLObjectType({
             type: Required(GraphQLString)
         },
         avatar: {
-            type: GraphQLString,
-            resolve: (parent) => {
-                return (
-                    parent.avatar ||
-                    'https://thesocietypages.org/socimages/files/2009/05/nopic_192.gif'
-                );
-            }
+            type: GraphQLString
         },
         isGuestUser: {
             type: GraphQLBoolean
@@ -44,9 +40,6 @@ const UserType = new GraphQLObjectType({
 export const UserInputType = new GraphQLInputObjectType({
     name: 'UserInput',
     fields: () => ({
-        id: {
-            type: GraphQLID
-        },
         username: {
             type: GraphQLString
         },
@@ -55,6 +48,9 @@ export const UserInputType = new GraphQLInputObjectType({
         },
         avatar: {
             type: GraphQLString
+        },
+        githubId: {
+            type: GraphQLID,
         },
         isGuestUser: {
             type: GraphQLBoolean

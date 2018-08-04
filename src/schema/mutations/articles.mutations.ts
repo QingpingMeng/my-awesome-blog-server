@@ -8,6 +8,7 @@ import { Required } from '../definition';
 import { CommentInputType } from '../types/comment.type';
 import { ICommentAttributes, Comment } from '../../models/comment.model';
 import { UnauthorizedError } from '../../errors/unauthorized';
+import { Request } from 'express';
 
 const allowedKeys = ['body', 'title', 'summary'];
 
@@ -58,7 +59,8 @@ export const createArticle = {
     args: {
         article: { type: Required(ArticleInputType) }
     },
-    resolve: async (_: any, args: IArticleInput) => {
+    resolve: async (_: any, args: IArticleInput, context?: Request) => {
+        context && console.log(context.isAuthenticated());
         let article = new Article();
         article = updateObjectWith(article, args.article, allowedKeys);
         const users = await User.find().exec();
@@ -99,12 +101,12 @@ export const addCommentToArticle = {
         }
 
         try {
-            const commentModel = new Comment();
+            let commentModel = new Comment();
             commentModel.article = article;
             commentModel.author = user;
             commentModel.body = args.comment.body;
 
-            await commentModel.save();
+            commentModel = await commentModel.save();
 
             article.comments.push(commentModel);
             await article.save();
