@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.test' });
 
 import express from 'express';
+import cors from 'cors';
 import compression from 'compression'; // compresses requests
 import bodyParser from 'body-parser';
 import lusca from 'lusca';
@@ -21,6 +22,8 @@ const app = express();
 // Express configuration
 app.set('port', process.env.PORT || 3000);
 app.use(compression());
+app.use(cors());
+// app.options('*', cors()); // enable pre-flight request for DELETE request
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(lusca.xframe('SAMEORIGIN'));
