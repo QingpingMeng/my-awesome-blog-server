@@ -13,11 +13,9 @@ export interface RequestWithDb extends Request {
 export const connectToDb: Handler = async (req: RequestWithDb, res, next) => {
     try {
         const db = await connect(dbUri,  { useNewUrlParser: true });
-        console.log('Db connected...');
         req.db = db;
         next();
     } catch (err) {
-        console.log('database connection fails', err);
         next(err);
     }
 };

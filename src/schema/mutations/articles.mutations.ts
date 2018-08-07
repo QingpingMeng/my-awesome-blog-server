@@ -1,5 +1,5 @@
 import ArticleType, { ArticleInputType } from '../types/article.type';
-import { GraphQLID, GraphQLString } from 'graphql';
+import { GraphQLString } from 'graphql';
 import { Article, IArticleAttribute } from '../../models/articles.model';
 import { updateObjectWith } from '../../utils/updateObjectWith';
 import { User } from '../../models/user.model';
@@ -8,7 +8,7 @@ import { Required } from '../definition';
 import { CommentInputType } from '../types/comment.type';
 import { ICommentAttributes, Comment } from '../../models/comment.model';
 import { UnauthorizedError } from '../../errors/unauthorized';
-import { Request } from 'express';
+import { ForbiddenError } from '../../errors/forbidden';
 
 const allowedKeys = ['body', 'title', 'summary'];
 
@@ -19,16 +19,27 @@ export interface IArticleInput {
 export const deleteArticle = {
     type: ArticleType,
     args: {
-        id: {
-            type: Required(GraphQLID)
+        slug: {
+            type: Required(GraphQLString)
         }
     },
-    resolve: async (_: any, args: { id: string }) => {
-        try {
-            return await Article.findByIdAndRemove(args.id);
-        } catch {
+    resolve: async (_: any, args: { slug: string }, context?: any) => {
+        if (!context || !context.userPayload) {
+            throw new UnauthorizedError();
+        }
+
+        const article = await Article.findOne({ slug: args.slug })
+            .populate('author')
+            .exec();
+        if (!article) {
             throw new NotFoundError('Article');
         }
+
+        if (article.author.id !== context.userPayload.id) {
+            throw new ForbiddenError();
+        }
+
+        return article.remove();
     }
 };
 
@@ -37,12 +48,21 @@ export const updateArticle = {
     args: {
         article: { type: Required(ArticleInputType) }
     },
-    resolve: async (_: any, args: IArticleInput) => {
-        let article;
-        try {
-            article = await Article.findById(args.article.id).exec();
-        } catch {
+    resolve: async (_: any, args: IArticleInput, context?: any) => {
+        if (!context || !context.userPayload) {
+            throw new UnauthorizedError();
+        }
+
+        let article = await Article.findOne({ slug: args.article.slug })
+            .populate('author')
+            .exec();
+
+        if (!article) {
             throw new NotFoundError('Article');
+        }
+
+        if (article.author.id !== context.userPayload.id) {
+            throw new ForbiddenError();
         }
 
         try {
@@ -59,8 +79,11 @@ export const createArticle = {
     args: {
         article: { type: Required(ArticleInputType) }
     },
-    resolve: async (_: any, args: IArticleInput, context?: Request) => {
-        context && console.log(context.isAuthenticated());
+    resolve: async (_: any, args: IArticleInput, context?: any) => {
+        if (!context || !context.userPayload) {
+            throw new UnauthorizedError();
+        }
+
         let article = new Article();
         article = updateObjectWith(article, args.article, allowedKeys);
         const users = await User.find().exec();
@@ -84,12 +107,16 @@ export const addCommentToArticle = {
             type: Required(GraphQLString)
         }
     },
-    resolve: async (_: any, args: IAddCommentToArticleArgs) => {
+    resolve: async (_: any, args: IAddCommentToArticleArgs, context?: any) => {
+        if (!context || !context.userPayload) {
+            throw new UnauthorizedError();
+        }
+
         const [article, user] = await Promise.all([
             Article.findOne({ slug: args.slug })
                 .populate('author')
                 .exec(),
-            User.findOne().exec()
+            User.findById(context.userPayload.id).exec()
         ]);
 
         if (!article) {

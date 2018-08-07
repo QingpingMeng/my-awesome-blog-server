@@ -8,6 +8,7 @@ import {
     addCommentToArticle
 } from '../mutations/articles.mutations';
 import { createUser } from '../mutations/users.mutations';
+import { IUserModel } from '../../models/user.model';
 
 let mongod: MongodbMemoryServer;
 let db: Mongoose;
@@ -27,15 +28,21 @@ const exampleComment = {
 const exampleUser = {
     username: 'testing',
     email: 'test@example.com',
-    avatar: 'avatar'
+    avatar: 'avatar',
+    githubId: 'github'
+};
+
+let userTest: IUserModel;
+let context: {
+    userPayload: {
+        id: string;
+    };
 };
 
 describe('Articles querst tests', () => {
     beforeAll(async () => {
-        console.log('before all');
         mongod = new MongodbMemoryServer();
         const uri = await mongod.getConnectionString();
-        console.log(uri);
         db = await connect(uri);
     });
 
@@ -45,17 +52,31 @@ describe('Articles querst tests', () => {
 
     beforeEach(async () => {
         await db.connection.dropDatabase();
+        userTest = await createUser.resolve(undefined, { user: exampleUser });
+        context = {
+            userPayload: {
+                id: userTest.id
+            }
+        };
     });
 
     it('should query all articles', async () => {
         // arrange
         const [obj1, obj2] = await Promise.all([
-            createArticle.resolve(undefined, {
-                article: exampleArticle
-            }),
-            createArticle.resolve(undefined, {
-                article: exampleArticle
-            })
+            createArticle.resolve(
+                undefined,
+                {
+                    article: exampleArticle
+                },
+                context
+            ),
+            createArticle.resolve(
+                undefined,
+                {
+                    article: exampleArticle
+                },
+                context
+            )
         ]);
 
         // action
@@ -67,17 +88,22 @@ describe('Articles querst tests', () => {
 
     it('should find one article', async () => {
         // arrange
-        const user = await createUser.resolve(undefined, {
-            user: exampleUser
-        });
-        const obj1 = await createArticle.resolve(undefined, {
-            article: exampleArticle
-        });
+        const obj1 = await createArticle.resolve(
+            undefined,
+            {
+                article: exampleArticle
+            },
+            context
+        );
 
-        const comment = await addCommentToArticle.resolve(undefined, {
-            slug: obj1.slug,
-            comment: exampleComment
-        });
+        const comment = await addCommentToArticle.resolve(
+            undefined,
+            {
+                slug: obj1.slug,
+                comment: exampleComment
+            },
+            context
+        );
 
         // action
         const article = await queryArticle.resolve(undefined, {

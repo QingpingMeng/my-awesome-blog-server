@@ -57,7 +57,7 @@ UserDBSchema.methods.generateJWT = function(): string {
             username: this.username,
             exp: parseInt(exp.getTime() / 1000 + '', 10)
         },
-        'secret'
+        process.env.PRIVATE_SECRET
     );
 };
 

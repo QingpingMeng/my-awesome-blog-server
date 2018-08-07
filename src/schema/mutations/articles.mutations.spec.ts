@@ -11,6 +11,7 @@ import MongodbMemoryServer from 'mongodb-memory-server';
 import { queryArticles } from '../queries/articles.query';
 import { UserError } from '../../errors/userError';
 import { createUser } from './users.mutations';
+import { IUserModel } from '../../models/user.model';
 
 let mongod: MongodbMemoryServer;
 let db: Mongoose;
@@ -20,7 +21,8 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
 const exampleUser = {
     username: 'testing',
     email: 'test@example.com',
-    avatar: 'avatar'
+    avatar: 'avatar',
+    githubId: 'github'
 };
 
 const exampleArticle = {
@@ -33,12 +35,17 @@ const exampleComment = {
     body: 'comment'
 };
 
+let userTest: IUserModel;
+let context: {
+    userPayload: {
+        id: string;
+    };
+};
+
 describe('Articles mutation test', () => {
     beforeAll(async () => {
-        console.log('before all');
         mongod = new MongodbMemoryServer();
         const uri = await mongod.getConnectionString();
-        console.log(uri);
         db = await connect(uri);
     });
 
@@ -48,17 +55,32 @@ describe('Articles mutation test', () => {
 
     beforeEach(async () => {
         await db.connection.dropDatabase();
+        userTest = await createUser.resolve(undefined, { user: exampleUser });
+        context = {
+            userPayload: {
+                id: userTest.id
+            }
+        };
     });
 
     it('should create an article', async () => {
+        // arrange
         const article = {
             title: 'test title',
             summary: 'test body',
             body: 'test summary'
         };
-        const obj = await createArticle.resolve(undefined, {
-            article: article
-        });
+
+        // action
+        const obj = await createArticle.resolve(
+            undefined,
+            {
+                article: article
+            },
+            { userPayload: { id: userTest.id }, context }
+        );
+
+        // assert
         expect(obj.summary).toEqual(article.summary);
         expect(obj.body).toEqual(article.body);
         expect(obj.title).toEqual(article.title);
@@ -67,27 +89,33 @@ describe('Articles mutation test', () => {
     });
 
     it('should update an article', async () => {
+        // arange
         const article = {
             title: 'test title',
             summary: 'test body',
             body: 'test summary'
         };
-        const obj = await createArticle.resolve(undefined, {
-            article: article
-        });
+        const obj = await createArticle.resolve(
+            undefined,
+            {
+                article: article
+            },
+            context
+        );
 
         const updatedArticle: IArticleInput = {
             article: {
                 title: 'title after',
                 summary: 'summary after',
                 body: 'body after',
-                id: obj.id
+                slug: obj.slug
             }
         };
 
         const exsitingArticle = await updateArticle.resolve(
             undefined,
-            updatedArticle
+            updatedArticle,
+            context
         );
         expect(exsitingArticle.title).toEqual('title after');
         expect(exsitingArticle.summary).toEqual('summary after');
@@ -101,11 +129,19 @@ describe('Articles mutation test', () => {
             summary: 'test body',
             body: 'test summary'
         };
-        const obj = await createArticle.resolve(undefined, {
-            article: article
-        });
+        const obj = await createArticle.resolve(
+            undefined,
+            {
+                article: article
+            },
+            context
+        );
 
-        const result = await deleteArticle.resolve(undefined, { id: obj.id });
+        const result = await deleteArticle.resolve(
+            undefined,
+            { slug: obj.slug },
+            context
+        );
         expect(result.id).toEqual(obj.id);
 
         const articles = await queryArticles.resolve(undefined, undefined);
@@ -114,7 +150,7 @@ describe('Articles mutation test', () => {
 
     it('should not delete non-exist artilce', async () => {
         try {
-            await deleteArticle.resolve(undefined, { id: 'test' });
+            await deleteArticle.resolve(undefined, { slug: 'test' }, context);
             fail('UserError expected but not found');
         } catch (err) {
             const userErr = err as UserError;
@@ -125,14 +161,18 @@ describe('Articles mutation test', () => {
 
     it('should not update non-exist artilce', async () => {
         try {
-            await updateArticle.resolve(undefined, {
-                article: {
-                    title: 'title after',
-                    summary: 'summary after',
-                    body: 'body after',
-                    id: '1234'
-                }
-            });
+            await updateArticle.resolve(
+                undefined,
+                {
+                    article: {
+                        title: 'title after',
+                        summary: 'summary after',
+                        body: 'body after',
+                        id: '1234'
+                    }
+                },
+                context
+            );
             fail('UserError expected but not found');
         } catch (err) {
             const userErr = err as UserError;
@@ -145,14 +185,22 @@ describe('Articles mutation test', () => {
         // arrange
         const [_, article] = await Promise.all([
             createUser.resolve(undefined, { user: exampleUser }),
-            createArticle.resolve(undefined, { article: exampleArticle })
+            createArticle.resolve(
+                undefined,
+                { article: exampleArticle },
+                context
+            )
         ]);
 
         // action
-        const result = await addCommentToArticle.resolve(undefined, {
-            slug: article.slug,
-            comment: exampleComment
-        });
+        const result = await addCommentToArticle.resolve(
+            undefined,
+            {
+                slug: article.slug,
+                comment: exampleComment
+            },
+            context
+        );
 
         // assert
         expect(result.body).toEqual(exampleComment.body);

@@ -1,8 +1,11 @@
+import dotenv from 'dotenv';
+// Load environment variables from .env file, where API keys and passwords are configured
+dotenv.config({ path: '.env.test' });
+
 import express from 'express';
 import compression from 'compression'; // compresses requests
 import bodyParser from 'body-parser';
 import lusca from 'lusca';
-import dotenv from 'dotenv';
 import schema from './schema';
 import graphqlHTTP from 'express-graphql';
 import { connectToDb } from './utils/db';
@@ -10,9 +13,7 @@ import { UserError } from './errors/userError';
 import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { User } from './models/user.model';
-
-// Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: '.env.example' });
+import { authType } from './auth/jwt';
 
 // Create Express server
 const app = express();
@@ -30,8 +31,8 @@ app.use(passport.initialize());
 passport.use(
     new GitHubStrategy(
         {
-            clientID: 'aa',
-            clientSecret: 'bb',
+            clientID: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_SECRET,
             callbackURL: 'http://localhost:3000/auth/github/callback'
         },
         async (
@@ -74,14 +75,13 @@ app.get(
         failureRedirect: '/login'
     }),
     function(req, res) {
-        console.log(req.user);
-        res.json(req.user);
         res.redirect('/graphql');
     }
 );
 
 app.use(
     '/graphql',
+    authType.optional,
     graphqlHTTP({
         schema: schema,
         graphiql: true,
