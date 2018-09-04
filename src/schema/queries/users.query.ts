@@ -3,6 +3,7 @@ import { List } from '../definition';
 import userType from '../types/user.type';
 import { RequestWithDb } from '../../utils/db';
 import { User } from '../../models/user.model';
+import { UnauthorizedError } from '../../errors/unauthorized';
 
 export const userById = {
     type: userType,
@@ -20,9 +21,9 @@ export const currentUser = {
     type: userType,
     resolve: (_: any, args?: any, context?: any) => {
         if (context && context.userPayload) {
-            return User.findOne(context.userPayload.id).exec();
+            return User.findById(context.userPayload.id).exec();
         }
 
-        return undefined;
+        throw new UnauthorizedError();
     }
 };

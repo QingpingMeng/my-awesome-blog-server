@@ -18,7 +18,8 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
 const exampleArticle = {
     title: 'test title',
     summary: 'test body',
-    body: 'test summary'
+    body: 'test summary',
+    jsonBody: '{}'
 };
 
 const exampleComment = {

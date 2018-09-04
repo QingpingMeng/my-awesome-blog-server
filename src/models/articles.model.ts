@@ -8,6 +8,7 @@ export interface IArticleAttribute {
     title: string;
     summary?: string;
     body: string;
+    jsonBody: string;
     comments?: ICommentModel[] & { remove: (id: string) => void };
     author?: IUserModel;
 }

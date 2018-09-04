@@ -86,8 +86,8 @@ export const createArticle = {
 
         let article = new Article();
         article = updateObjectWith(article, args.article, allowedKeys);
-        const users = await User.find().exec();
-        article.author = users[0];
+        const user = await User.findById(context.userPayload.id).exec();
+        article.author = user;
         return await article.save();
     }
 };

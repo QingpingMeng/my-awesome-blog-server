@@ -2,7 +2,8 @@ import {
     GraphQLObjectType,
     GraphQLString,
     GraphQLInputObjectType,
-    GraphQLID
+    GraphQLID,
+    GraphQLBoolean
 } from 'graphql';
 import { Required, List } from '../definition';
 import UserType, { UserInputType } from './user.type';
@@ -27,8 +28,14 @@ const ArticleType = new GraphQLObjectType({
         body: {
             type: GraphQLString
         },
+        jsonBody: {
+            type: GraphQLString
+        },
         author: {
             type: Required(UserType)
+        },
+        isDraft: {
+            type: GraphQLBoolean
         },
         comments: {
             type: List(CommentType),
@@ -66,6 +73,12 @@ export const ArticleInputType = new GraphQLInputObjectType({
         },
         body: {
             type: GraphQLString
+        },
+        jsonBody: {
+            type: GraphQLString,
+        },
+        isDraft: {
+            type: GraphQLBoolean
         },
         author: {
             type: UserInputType
