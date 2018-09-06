@@ -18,6 +18,12 @@ const CommentType = new GraphQLObjectType({
         },
         author: {
             type: UserType
+        },
+        createdAt: {
+            type: GraphQLString
+        },
+        updatedAt: {
+            type: GraphQLString
         }
     })
 });

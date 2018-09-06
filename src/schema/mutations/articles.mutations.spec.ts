@@ -28,6 +28,7 @@ const exampleUser = {
 const exampleArticle = {
     title: 'test title',
     summary: 'test body',
+    jsonBody : 'json boyd',
     body: 'test summary'
 };
 
@@ -68,7 +69,8 @@ describe('Articles mutation test', () => {
         const article = {
             title: 'test title',
             summary: 'test body',
-            body: 'test summary'
+            body: 'test summary',
+            jsonBody: 'jsonBody'
         };
 
         // action
@@ -93,7 +95,8 @@ describe('Articles mutation test', () => {
         const article = {
             title: 'test title',
             summary: 'test body',
-            body: 'test summary'
+            body: 'test summary',
+            jsonBody: 'test josn body'
         };
         const obj = await createArticle.resolve(
             undefined,
@@ -108,6 +111,7 @@ describe('Articles mutation test', () => {
                 title: 'title after',
                 summary: 'summary after',
                 body: 'body after',
+                jsonBody: 'jsonBody after',
                 slug: obj.slug
             }
         };
@@ -127,7 +131,8 @@ describe('Articles mutation test', () => {
         const article = {
             title: 'test title',
             summary: 'test body',
-            body: 'test summary'
+            body: 'test summary',
+            jsonBody: 'json body'
         };
         const obj = await createArticle.resolve(
             undefined,
@@ -168,6 +173,7 @@ describe('Articles mutation test', () => {
                         title: 'title after',
                         summary: 'summary after',
                         body: 'body after',
+                        jsonBody: 'jsonBody',
                         id: '1234'
                     }
                 },

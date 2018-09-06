@@ -34,6 +34,12 @@ const ArticleType = new GraphQLObjectType({
         author: {
             type: Required(UserType)
         },
+        createdAt: {
+            type: GraphQLString
+        },
+        updatedAt: {
+            type: GraphQLString
+        },
         isDraft: {
             type: GraphQLBoolean
         },

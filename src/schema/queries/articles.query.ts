@@ -20,7 +20,9 @@ export const queryArticles = {
                 throw new InvalidParameter('condition');
             }
         }
-        return await Article.find(condition).exec();
+        return await Article.find(condition)
+            .sort({ createdAt: 'desc' })
+            .exec();
     }
 };
 
