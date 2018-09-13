@@ -9,6 +9,7 @@ import { Required, List } from '../definition';
 import UserType, { UserInputType } from './user.type';
 import CommentType, { CommentInputType } from './comment.type';
 import { IArticleModel } from '../../models/articles.model';
+import truncate from 'truncate-html';
 
 const ArticleType = new GraphQLObjectType({
     name: 'Article',
@@ -28,11 +29,24 @@ const ArticleType = new GraphQLObjectType({
         body: {
             type: GraphQLString
         },
+        previewBody: {
+            type: GraphQLString,
+            resolve: (article: IArticleModel) => {
+                return truncate(article.body, 100, {
+                    byWords: true,
+                });
+            }
+        },
         jsonBody: {
             type: GraphQLString
         },
         author: {
-            type: Required(UserType)
+            type: Required(UserType),
+            resolve: async (article: IArticleModel) => {
+                const populatedArticle = await article
+                .populate('author').execPopulate();
+                return populatedArticle.author;
+            }
         },
         createdAt: {
             type: GraphQLString
@@ -71,6 +85,9 @@ export const ArticleInputType = new GraphQLInputObjectType({
         id: {
             type: GraphQLID
         },
+        slug: {
+            type: GraphQLID
+        },
         title: {
             type: GraphQLString
         },
@@ -81,7 +98,7 @@ export const ArticleInputType = new GraphQLInputObjectType({
             type: GraphQLString
         },
         jsonBody: {
-            type: GraphQLString,
+            type: GraphQLString
         },
         isDraft: {
             type: GraphQLBoolean

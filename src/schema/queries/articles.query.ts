@@ -1,4 +1,4 @@
-import { GraphQLString } from 'graphql';
+import { GraphQLString, GraphQLInt } from 'graphql';
 import { List, IQueryConditionArg } from '../definition';
 import ArticleType from '../types/article.type';
 import { Article } from '../../models/articles.model';
@@ -7,20 +7,40 @@ import { InvalidParameter } from '../../errors/invalidParameter';
 export const queryArticles = {
     type: List(ArticleType),
     args: {
-        condition: {
+        query: {
             type: GraphQLString
+        },
+        limit: {
+            type: GraphQLInt
+        },
+        offset: {
+            type: GraphQLInt
         }
     },
     resolve: async (_: any, args?: IQueryConditionArg) => {
         let condition: any = {};
-        if (args && args.condition) {
-            try {
-                condition = JSON.parse(args.condition);
-            } catch {
-                throw new InvalidParameter('condition');
+        let limit = 10;
+        let offset = 0;
+        if (args) {
+            if (args.condition) {
+                try {
+                    condition = JSON.parse(args.condition);
+                } catch {
+                    throw new InvalidParameter('condition');
+                }
+            }
+
+            if (args.limit) {
+                limit = args.limit;
+            }
+
+            if (args.offset) {
+                offset = args.offset;
             }
         }
         return await Article.find(condition)
+            .limit(limit)
+            .skip(offset)
             .sort({ createdAt: 'desc' })
             .exec();
     }

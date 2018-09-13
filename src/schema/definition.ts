@@ -12,4 +12,6 @@ export function Required(type: GraphQLType) {
 
 export type IQueryConditionArg = {
     condition?: string;
+    limit?: number;
+    offset?: number;
 };

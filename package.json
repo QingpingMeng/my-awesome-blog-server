@@ -40,6 +40,7 @@
     "passport": "^0.4.0",
     "passport-github2": "^0.1.11",
     "slug": "^0.9.1",
+    "truncate-html": "^1.0.1",
     "winston": "^3.0.0"
   },
   "jest": {
