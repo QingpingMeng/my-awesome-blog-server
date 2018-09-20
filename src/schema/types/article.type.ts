@@ -9,7 +9,6 @@ import { Required, List } from '../definition';
 import UserType, { UserInputType } from './user.type';
 import CommentType, { CommentInputType } from './comment.type';
 import { IArticleModel } from '../../models/articles.model';
-import truncate from 'truncate-html';
 
 const ArticleType = new GraphQLObjectType({
     name: 'Article',
@@ -28,14 +27,6 @@ const ArticleType = new GraphQLObjectType({
         },
         body: {
             type: GraphQLString
-        },
-        previewBody: {
-            type: GraphQLString,
-            resolve: (article: IArticleModel) => {
-                return truncate(article.body, 100, {
-                    byWords: true,
-                });
-            }
         },
         jsonBody: {
             type: GraphQLString

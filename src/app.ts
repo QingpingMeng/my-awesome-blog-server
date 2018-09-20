@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-// Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: '.env.test' });
-
 import express from 'express';
 import cors from 'cors';
 import compression from 'compression'; // compresses requests
@@ -9,10 +5,10 @@ import bodyParser from 'body-parser';
 import lusca from 'lusca';
 import schema from './schema';
 import graphqlHTTP from 'express-graphql';
-import { connectToDb } from './utils/db';
 import { UserError } from './errors/userError';
 import { authType } from './auth/jwt';
 import authRouter from './auth/authRoute';
+import { connect } from 'mongoose';
 
 // Create Express server
 const app = express();
@@ -26,7 +22,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
-app.use(connectToDb);
+
+// connect to db
+connect(
+    process.env.MONGO_DB_URI || 'localhost:2017',
+    { useNewUrlParser: true }
+);
 
 app.use(authRouter);
 
@@ -35,7 +36,7 @@ app.use(
     authType.optional,
     graphqlHTTP({
         schema: schema,
-        graphiql: true,
+        graphiql: process.env.NODE_ENV === 'dev' ? true : false,
         formatError(err) {
             const userError = err.originalError as UserError;
             return {

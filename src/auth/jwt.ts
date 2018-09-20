@@ -16,11 +16,11 @@ function getTokenFromHeader(req: Request) {
 
 export const authType = {
     required: jwt({
-        secret: process.env.PRIVATE_SECRET,
+        secret: process.env.PRIVATE_SECRET || 'thisasecret',
         userProperty: 'userPayload'
     }),
     optional: jwt({
-        secret: process.env.PRIVATE_SECRET,
+        secret: process.env.PRIVATE_SECRET || 'thisasecret',
         userProperty: 'userPayload',
         credentialsRequired: false,
         getToken: getTokenFromHeader

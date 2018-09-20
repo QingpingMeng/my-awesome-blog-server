@@ -1,11 +1,13 @@
-import errorHandler from 'errorhandler';
-
 import app from './app';
 
 /**
  * Error Handler. Provides full stack - remove for production
  */
-app.use(errorHandler());
+if (process.env.NODE_ENV === 'development') {
+    // only use in development
+    const errorhandler = require('errorhandler');
+    app.use(errorhandler());
+  }
 
 /**
  * Start Express server.

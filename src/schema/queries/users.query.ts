@@ -1,7 +1,5 @@
 import { GraphQLString } from 'graphql';
-import { List } from '../definition';
 import userType from '../types/user.type';
-import { RequestWithDb } from '../../utils/db';
 import { User } from '../../models/user.model';
 import { UnauthorizedError } from '../../errors/unauthorized';
 

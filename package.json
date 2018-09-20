@@ -15,13 +15,11 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "debug": "npm run build && npm run watch-debug",
-    "serve-debug": "nodemon --inspect dist/server.js",
+    "debug": "NODE_ENV=dev npm run build && npm run watch-debug",
+    "serve-debug": "nodemon -r dotenv/config --inspect dist/server.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run serve-debug\""
   },
   "dependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/express-session": "^1.15.10",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.2",
@@ -63,6 +61,8 @@
     ]
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/express-session": "^1.15.10",
     "@types/body-parser": "^1.16.8",
     "@types/compression": "^0.0.35",
     "@types/cors": "^2.8.4",
