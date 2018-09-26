@@ -36,7 +36,7 @@ authRouter.post('/signin', async (req, res, next) => {
                 }
             }
         );
-        console.log('github profile received', profile);
+        console.log('github profile received');
 
         if (profile.email != 'missing1989@gmail.com') {
             res.status(403).send('User not allowed');
@@ -52,10 +52,10 @@ authRouter.post('/signin', async (req, res, next) => {
             newUser.avatar = profile.avatar_url;
             try {
                 newUser = await newUser.save();
-                console.log('new user registered');
+                console.log('new user registered', newUser);
                 res.json(newUser.toAuthJSON());
             } catch (err) {
-                console.log('new user registration failed');
+                console.log('new user registration failed', err);
                 res.status(401).end();
             }
         } else {
