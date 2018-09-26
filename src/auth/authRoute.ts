@@ -6,9 +6,9 @@ const authRouter = express.Router();
 
 interface GithubProfile {
     id: string;
-    emails: { value: string }[];
-    photos: { value: string }[];
-    username: string;
+    email: string;
+    avatar_url: string;
+    name: string;
 }
 
 authRouter.post('/signin', async (req, res, next) => {
@@ -31,21 +31,25 @@ authRouter.post('/signin', async (req, res, next) => {
             'https://api.github.com/user',
             {
                 headers: {
-                    Authorization: `token ${response.data.access_token}`
+                    Authorization: `token ${response.data.access_token}`,
+                    Accept: 'application/vnd.github.v3+json'
                 }
             }
         );
         console.log('github profile received', profile);
+
+        if (profile.email != 'missing1989@gmail.com') {
+            res.status(403).send('User not allowed');
+        }
 
         const user = await User.findOne({ githubId: profile.id }).exec();
         console.log('user find completed', user);
         if (!user) {
             let newUser = new User();
             newUser.githubId = profile.id;
-            newUser.email = profile.emails[0].value;
-            newUser.username = profile.username;
-            newUser.avatar =
-                profile.photos && profile.photos[0] && profile.photos[0].value;
+            newUser.email = profile.email;
+            newUser.username = profile.name;
+            newUser.avatar = profile.avatar_url;
             try {
                 newUser = await newUser.save();
                 console.log('new user registered');
