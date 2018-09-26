@@ -23,6 +23,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 
+app.use(function(req, res, next) {
+    res.setHeader('X-PodName', process.env.POD_NAME);
+    next();
+  });
+
 // connect to db
 connect(
     process.env.MONGO_DB_URI || 'localhost:2017',
