@@ -35,9 +35,10 @@ authRouter.post('/signin', async (req, res, next) => {
                 }
             }
         );
+        console.log('github profile received', profile);
 
         const user = await User.findOne({ githubId: profile.id }).exec();
-        console.log('user find completed');
+        console.log('user find completed', user);
         if (!user) {
             let newUser = new User();
             newUser.githubId = profile.id;
