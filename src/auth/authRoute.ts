@@ -12,6 +12,7 @@ interface GithubProfile {
 }
 
 authRouter.post('/signin', async (req, res, next) => {
+    console.log('sign in started');
     const github_code = req.body.code;
     try {
         const response = await axios.post(
@@ -25,6 +26,7 @@ authRouter.post('/signin', async (req, res, next) => {
                 }
             }
         );
+        console.log('github response received');
         const { data: profile } = await axios.get<GithubProfile>(
             'https://api.github.com/user',
             {
@@ -35,6 +37,7 @@ authRouter.post('/signin', async (req, res, next) => {
         );
 
         const user = await User.findOne({ githubId: profile.id }).exec();
+        console.log('user find completed');
         if (!user) {
             let newUser = new User();
             newUser.githubId = profile.id;
@@ -44,14 +47,18 @@ authRouter.post('/signin', async (req, res, next) => {
                 profile.photos && profile.photos[0] && profile.photos[0].value;
             try {
                 newUser = await newUser.save();
+                console.log('new user registered');
                 res.json(newUser.toAuthJSON());
             } catch (err) {
+                console.log('new user registration failed');
                 res.status(401).end();
             }
         } else {
+            console.log('sign in completed');
             res.json(user.toAuthJSON());
         }
-    } catch {
+    } catch (err) {
+        console.log('sign in failed', err);
         res.status(401).end();
     }
 });
