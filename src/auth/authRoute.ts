@@ -8,7 +8,7 @@ interface GithubProfile {
     id: string;
     email: string;
     avatar_url: string;
-    name: string;
+    login: string;
 }
 
 authRouter.post('/signin', async (req, res, next) => {
@@ -48,7 +48,7 @@ authRouter.post('/signin', async (req, res, next) => {
             let newUser = new User();
             newUser.githubId = profile.id;
             newUser.email = profile.email;
-            newUser.username = profile.name;
+            newUser.username = profile.login;
             newUser.avatar = profile.avatar_url;
             try {
                 newUser = await newUser.save();
