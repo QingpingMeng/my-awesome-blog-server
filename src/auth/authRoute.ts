@@ -13,6 +13,7 @@ interface GithubProfile {
 
 authRouter.post('/signin', async (req, res, next) => {
     const github_code = req.body.code;
+    console.log(req);
     try {
         const response = await axios.post(
             `https://github.com/login/oauth/access_token?client_id=${
@@ -46,13 +47,14 @@ authRouter.post('/signin', async (req, res, next) => {
                 newUser = await newUser.save();
                 res.json(newUser.toAuthJSON());
             } catch (err) {
-                res.status(401);
+                res.status(401).end();
             }
         } else {
             res.json(user.toAuthJSON());
         }
     } catch {
-        res.status(401);
+        console.log('catch');
+        res.status(401).end();
     }
 });
 
