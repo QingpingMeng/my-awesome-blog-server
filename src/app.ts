@@ -24,7 +24,7 @@ app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 
 app.use(function(req, res, next) {
-    res.setHeader('X-PodName', process.env.POD_NAME);
+    res.setHeader('X-PodName', process.env.POD_NAME || 'debug');
     next();
   });
 
@@ -43,6 +43,7 @@ app.use(
         schema: schema,
         graphiql: process.env.NODE_ENV === 'dev' ? true : false,
         formatError(err) {
+            console.log('GraphqlQl Error', err);
             const userError = err.originalError as UserError;
             return {
                 message: err.message,
