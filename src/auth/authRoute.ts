@@ -55,7 +55,7 @@ authRouter.post('/signin', async (req, res, next) => {
                 console.log('new user registered', newUser);
                 res.json(newUser.toAuthJSON());
             } catch (err) {
-                console.log('new user registration failed', err);
+                console.log('new user registration failed', err.message);
                 res.status(401).end();
             }
         } else {
@@ -63,7 +63,7 @@ authRouter.post('/signin', async (req, res, next) => {
             res.json(user.toAuthJSON());
         }
     } catch (err) {
-        console.log('sign in failed', err);
+        console.log('sign in failed', err.message);
         res.status(401).end();
     }
 });

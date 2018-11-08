@@ -18,7 +18,7 @@ app.set('port', process.env.PORT || 3000);
 app.use(compression());
 app.use(cors());
 app.options('*', cors()); // enable pre-flight request for DELETE request
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
