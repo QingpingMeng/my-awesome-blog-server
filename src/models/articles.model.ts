@@ -24,6 +24,7 @@ export const ArticleDBSchema = new Schema(
         summary: String,
         body: String,
         jsonBody: String,
+        isDraft: {type: Boolean, default: false},
         comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
         author: { type: Schema.Types.ObjectId, ref: 'User' }
     },
