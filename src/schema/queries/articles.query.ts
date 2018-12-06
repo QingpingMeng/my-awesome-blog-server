@@ -7,7 +7,7 @@ import { InvalidParameter } from '../../errors/invalidParameter';
 export const queryArticles = {
     type: List(ArticleType),
     args: {
-        query: {
+        condition: {
             type: GraphQLString
         },
         limit: {
@@ -38,6 +38,7 @@ export const queryArticles = {
                 offset = args.offset;
             }
         }
+        console.log(condition);
         return await Article.find(condition)
             .limit(limit)
             .skip(offset)
