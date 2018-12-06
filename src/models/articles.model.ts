@@ -9,6 +9,8 @@ export interface IArticleAttribute {
     summary?: string;
     body: string;
     jsonBody: string;
+    publishedAt?: number;
+    createdAt?: number;
     comments?: ICommentModel[] & { remove: (id: string) => void };
     author?: IUserModel;
 }
@@ -24,6 +26,7 @@ export const ArticleDBSchema = new Schema(
         summary: String,
         body: String,
         jsonBody: String,
+        publishedAt: Date,
         isDraft: {type: Boolean, default: false},
         comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
         author: { type: Schema.Types.ObjectId, ref: 'User' }

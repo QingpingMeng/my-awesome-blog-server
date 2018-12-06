@@ -48,6 +48,12 @@ const ArticleType = new GraphQLObjectType({
         isDraft: {
             type: GraphQLBoolean
         },
+        published_at: {
+            type: GraphQLString,
+            resolve: async(article: IArticleModel) => {
+                return article.publishedAt || article.createdAt;
+            }
+        },
         comments: {
             type: List(CommentType),
             resolve: async (article: IArticleModel) => {
@@ -89,6 +95,9 @@ export const ArticleInputType = new GraphQLInputObjectType({
             type: GraphQLString
         },
         jsonBody: {
+            type: GraphQLString
+        },
+        published_at: {
             type: GraphQLString
         },
         isDraft: {

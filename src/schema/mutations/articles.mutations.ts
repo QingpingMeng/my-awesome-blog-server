@@ -10,7 +10,7 @@ import { ICommentAttributes, Comment } from '../../models/comment.model';
 import { UnauthorizedError } from '../../errors/unauthorized';
 import { ForbiddenError } from '../../errors/forbidden';
 
-const allowedKeys = ['body', 'title', 'summary', 'jsonBody', 'isDraft'];
+const allowedKeys = ['body', 'title', 'summary', 'jsonBody', 'isDraft', 'publishedAt'];
 
 export interface IArticleInput {
     article: IArticleAttribute & { id?: string };

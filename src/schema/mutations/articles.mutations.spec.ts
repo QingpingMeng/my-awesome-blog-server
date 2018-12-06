@@ -29,7 +29,8 @@ const exampleArticle = {
     title: 'test title',
     summary: 'test body',
     jsonBody : 'json boyd',
-    body: 'test summary'
+    body: 'test summary',
+    createdAt: Date.now() - 1000
 };
 
 const exampleComment = {
@@ -174,6 +175,7 @@ describe('Articles mutation test', () => {
                         summary: 'summary after',
                         body: 'body after',
                         jsonBody: 'jsonBody',
+                        createdAt: Date.now(),
                         id: '1234'
                     }
                 },
