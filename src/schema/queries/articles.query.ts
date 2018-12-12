@@ -3,6 +3,8 @@ import { List, IQueryConditionArg } from '../definition';
 import ArticleType from '../types/article.type';
 import { Article } from '../../models/articles.model';
 import { InvalidParameter } from '../../errors/invalidParameter';
+import { UnauthorizedError } from '../../errors/unauthorized';
+import { ForbiddenError } from '../../errors/forbidden';
 
 export const queryArticles = {
     type: List(ArticleType),
@@ -38,7 +40,6 @@ export const queryArticles = {
                 offset = args.offset;
             }
         }
-        console.log(condition);
         return await Article.find(condition)
             .limit(limit)
             .skip(offset)
@@ -54,7 +55,7 @@ export const queryArticle = {
             type: GraphQLString
         }
     },
-    resolve: async (_: any, args: IQueryConditionArg) => {
+    resolve: async (_: any, args: IQueryConditionArg, context: any) => {
         let condition: any = {};
         if (args.condition) {
             try {
@@ -63,6 +64,20 @@ export const queryArticle = {
                 throw new InvalidParameter('condition');
             }
         }
-        return await Article.findOne(condition).exec();
+
+        let article = await Article.findOne(condition).exec();
+        if (article.isDraft) {
+            if (!context || !context.userPayload) {
+                throw new UnauthorizedError();
+            }
+
+            article = await article.populate('author').execPopulate();
+
+            if (article.author.id !== context.userPayload.id) {
+                throw new ForbiddenError();
+            }
+        }
+
+        return article;
     }
 };

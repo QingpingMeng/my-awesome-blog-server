@@ -9,6 +9,7 @@ import {
 } from '../mutations/articles.mutations';
 import { createUser } from '../mutations/users.mutations';
 import { IUserModel } from '../../models/user.model';
+import { UserError } from '../../errors/userError';
 
 let mongod: MongodbMemoryServer;
 let db: Mongoose;
@@ -19,6 +20,7 @@ const exampleArticle = {
     title: 'test title',
     summary: 'test body',
     body: 'test summary',
+    isDraft: false,
     jsonBody: '{}'
 };
 
@@ -107,12 +109,78 @@ describe('Articles querst tests', () => {
         );
 
         // action
-        const article = await queryArticle.resolve(undefined, {
-            condition: JSON.stringify({ slug: obj1.slug })
-        });
+        const article = await queryArticle.resolve(
+            undefined,
+            {
+                condition: JSON.stringify({ slug: obj1.slug })
+            },
+            undefined
+        );
 
-        // asert
+        // assert
         expect(article.body).toEqual(exampleArticle.body);
         expect(article.comments.length).toBe(1);
+    });
+
+    it('should not return draft to unauthorized user', async () => {
+        // arrange
+        const draft = { ...exampleArticle, isDraft: true };
+        const obj1 = await createArticle.resolve(
+            undefined,
+            {
+                article: draft
+            },
+            context
+        );
+
+        // action
+        try {
+            const article = await queryArticle.resolve(
+                undefined,
+                {
+                    condition: JSON.stringify({ slug: obj1.slug })
+                },
+                undefined
+            );
+            fail('Should throw UnauthorizedError');
+        } catch (err) {
+            // assert
+            const userError = err as UserError;
+            expect(userError.code).toBe(401);
+            expect(userError.isUserError).toBe(true);
+        }
+    });
+
+    it('should not return draft to non author', async () => {
+        // arrange
+        const draft = { ...exampleArticle, isDraft: true };
+        const obj1 = await createArticle.resolve(
+            undefined,
+            {
+                article: draft
+            },
+            context
+        );
+
+        // action
+        try {
+            const article = await queryArticle.resolve(
+                undefined,
+                {
+                    condition: JSON.stringify({ slug: obj1.slug })
+                },
+                {
+                    userPayload: {
+                        id: '123'
+                    }
+                }
+            );
+            fail('Should throw ForbiddenError');
+        } catch (err) {
+            // assert
+            const userError = err as UserError;
+            expect(userError.code).toBe(403);
+            expect(userError.isUserError).toBe(true);
+        }
     });
 });

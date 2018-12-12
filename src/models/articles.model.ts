@@ -10,6 +10,7 @@ export interface IArticleAttribute {
     body: string;
     jsonBody: string;
     publishedAt?: number;
+    isDraft: boolean;
     createdAt?: number;
     comments?: ICommentModel[] & { remove: (id: string) => void };
     author?: IUserModel;

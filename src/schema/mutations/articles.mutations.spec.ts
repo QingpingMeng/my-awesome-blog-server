@@ -27,6 +27,7 @@ const exampleUser = {
 
 const exampleArticle = {
     title: 'test title',
+    isDraft: false,
     summary: 'test body',
     jsonBody : 'json boyd',
     body: 'test summary',
@@ -71,6 +72,7 @@ describe('Articles mutation test', () => {
             title: 'test title',
             summary: 'test body',
             body: 'test summary',
+            isDraft: false,
             jsonBody: 'jsonBody'
         };
 
@@ -97,6 +99,7 @@ describe('Articles mutation test', () => {
             title: 'test title',
             summary: 'test body',
             body: 'test summary',
+            isDraft: false,
             jsonBody: 'test josn body'
         };
         const obj = await createArticle.resolve(
@@ -113,6 +116,7 @@ describe('Articles mutation test', () => {
                 summary: 'summary after',
                 body: 'body after',
                 jsonBody: 'jsonBody after',
+                isDraft: false,
                 slug: obj.slug
             }
         };
@@ -133,6 +137,7 @@ describe('Articles mutation test', () => {
             title: 'test title',
             summary: 'test body',
             body: 'test summary',
+            isDraft: false,
             jsonBody: 'json body'
         };
         const obj = await createArticle.resolve(
@@ -173,6 +178,7 @@ describe('Articles mutation test', () => {
                     article: {
                         title: 'title after',
                         summary: 'summary after',
+                        isDraft: false,
                         body: 'body after',
                         jsonBody: 'jsonBody',
                         createdAt: Date.now(),
